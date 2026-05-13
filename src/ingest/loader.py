@@ -50,7 +50,7 @@ def main(ticker, period, inp, chunk_size):
                         "total_chunks": len(c), "char_count": len(t)})
         click.echo(f"[loader]   → {len(c)} chunks, {len(t):,} chars")
     out = DATA_PROC / f"{ticker}_{period}_chunks.json"
-    out.write_text(json.dumps(result, indent=2, ensure_ascii=False))
+    out.write_text(json.dumps(result, indent=2, ensure_ascii=False, encoding="utf-8"))
     click.echo(f"[loader] ✅ Saved → {out}")
 
 if __name__ == "__main__": main()

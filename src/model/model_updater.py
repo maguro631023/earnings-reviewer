@@ -1,52 +1,19 @@
-"""model_updater.py — Financial model assumption updater
-Usage: python src/model/model_updater.py --ticker AAPL --period Q1_2026
-"""
 import click, json
 from pathlib import Path
 
-DATA_PROC  = Path("data/processed")
-REPORTS_DIR= Path("reports")
+DATA_PROC   = Path("data/processed")
+REPORTS_DIR = Path("reports")
 
 DEFAULT_MODEL = {
-    "revenue_growth_pct":  15.0,
-    "gross_margin_pct":    43.0,
-    "opex_growth_pct":      8.0,
-    "capex_pct_revenue":    5.0,
-    "fcf_margin_pct":      22.0,
-    "ev_ebitda_multiple":  18.0,
+    "revenue_growth_pct": 15.0, "gross_margin_pct": 43.0,
+    "opex_growth_pct": 8.0, "capex_pct_revenue": 5.0,
+    "fcf_margin_pct": 22.0, "ev_ebitda_multiple": 18.0,
 }
-
 SENSITIVITY = {
-    "revenue_guidance_delta_pct": {
-        "driver":"revenue_growth_pct","mult":1.0,
-        "note":"Direct guidance revision → revenue growth assumption"},
-    "gross_margin_delta_bps": {
-        "driver":"gross_margin_pct","mult":0.01,
-        "note":"QoQ gross margin delta (bps → pct)"},
-    "fcf_vs_model_pct": {
-        "driver":"fcf_margin_pct","mult":0.1,
-        "note":"FCF miss/beat → FCF margin assumption"},
+    "revenue_guidance_delta_pct": {"driver":"revenue_growth_pct","mult":1.0,"note":"Guidance revision"},
+    "gross_margin_delta_bps":     {"driver":"gross_margin_pct","mult":0.01,"note":"GM delta (bps)"},
+    "fcf_vs_model_pct":           {"driver":"fcf_margin_pct","mult":0.1,"note":"FCF miss/beat"},
 }
-
-def compute(sigs, base):
-    updates = []
-    for sig, m in SENSITIVITY.items():
-        delta = sigs.get(sig)
-        if delta is None: continue
-        old = base.get(m["driver"], 0.0)
-        chg = round(float(delta) * m["mult"], 2)
-        updates.append({
-            "driver": m["driver"], "from": old,
-            "to": round(old + chg, 2), "change": chg,
-            "source_signal": sig, "note": m["note"],
-        })
-    for u in sigs.get("model_assumption_updates", []):
-        updates.append({
-            "driver": u.get("driver"), "from": u.get("from"), "to": u.get("to"),
-            "confidence": u.get("confidence"), "source_signal": "llm_extracted",
-            "note": "Extracted from transcript narrative",
-        })
-    return updates
 
 @click.command()
 @click.option("--ticker", default="AUTO")
@@ -54,14 +21,26 @@ def compute(sigs, base):
 def main(ticker, period):
     sf = DATA_PROC / f"{ticker}_{period}_signals.json"
     if not sf.exists():
-        click.echo(f"[model] ❌ Not found: {sf}"); return
-    sigs = json.loads(sf.read_text())
-    updates = compute(sigs, DEFAULT_MODEL.copy())
+        click.echo(f"[model] Not found: {sf}"); return
+    sigs = json.loads(sf.read_text(encoding="utf-8"))
+    base = DEFAULT_MODEL.copy()
+    updates = []
+    for sig, m in SENSITIVITY.items():
+        delta = sigs.get(sig)
+        if delta is None: continue
+        old = base.get(m["driver"], 0.0)
+        chg = round(float(delta) * m["mult"], 2)
+        updates.append({"driver":m["driver"],"from":old,"to":round(old+chg,2),"change":chg,"source_signal":sig,"note":m["note"]})
+    for u in sigs.get("model_assumption_updates", []):
+        updates.append({"driver":u.get("driver"),"from":u.get("from"),"to":u.get("to"),
+                        "confidence":u.get("confidence"),"source_signal":"llm_extracted",
+                        "note":"Extracted from transcript"})
     REPORTS_DIR.mkdir(parents=True, exist_ok=True)
     out = REPORTS_DIR / f"{ticker}_{period}_model_updates.json"
-    out.write_text(json.dumps(
-        {"ticker":ticker,"period":period,"base_model":DEFAULT_MODEL,"updates":updates},
-        indent=2, ensure_ascii=False))
+    out.write_text(
+        json.dumps({"ticker":ticker,"period":period,"base_model":DEFAULT_MODEL,"updates":updates},
+                   indent=2, ensure_ascii=False),
+        encoding="utf-8")
     click.echo(f"\n[model] {len(updates)} assumption updates:")
     for u in updates:
         click.echo(f"  📐 {u['driver']}: {u['from']} → {u['to']}  ({u['note']})")
