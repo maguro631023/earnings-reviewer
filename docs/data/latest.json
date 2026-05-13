@@ -1,174 +1,18 @@
 {
   "meta": {
-    "ticker": "NVDA",
+    "ticker": "TSLA",
     "period": "Q1_2026",
-    "generated_at": "2026-05-13T06:26:55.081179Z",
-    "thesis_status": "watch"
+    "generated_at": "2026-05-13T06:30:06.391770Z",
+    "thesis_status": "intact"
   },
   "summary": {
-    "critical_count": 1,
+    "critical_count": 0,
     "warning_count": 0,
-    "model_updates_count": 7,
-    "thesis_status": "watch"
+    "model_updates_count": 0,
+    "thesis_status": "intact"
   },
-  "findings": [
-    {
-      "rule_id": "R002",
-      "name": "Gross Margin Compression",
-      "severity": "critical",
-      "action": "revise_assumption",
-      "message": "GM down -1030.0 bps — check pricing power / mix shift",
-      "tags": [
-        "margins",
-        "profitability"
-      ]
-    },
-    {
-      "rule_id": "R009",
-      "name": "Revenue Guidance Upgrade",
-      "severity": "info",
-      "action": "acknowledge",
-      "message": "Revenue guidance raised +4.8% — review upside to model",
-      "tags": [
-        "growth",
-        "guidance",
-        "upside"
-      ]
-    }
-  ],
-  "model_updates": [
-    {
-      "driver": "revenue_growth_pct",
-      "from": 15.0,
-      "to": 19.8,
-      "change": 4.8,
-      "source_signal": "revenue_guidance_delta_pct",
-      "note": "Guidance revision"
-    },
-    {
-      "driver": "gross_margin_pct",
-      "from": 43.0,
-      "to": 32.7,
-      "change": -10.3,
-      "source_signal": "gross_margin_delta_bps",
-      "note": "GM delta (bps)"
-    },
-    {
-      "driver": "fcf_margin_pct",
-      "from": 22.0,
-      "to": 21.5,
-      "change": -0.5,
-      "source_signal": "fcf_vs_model_pct",
-      "note": "FCF miss/beat"
-    },
-    {
-      "driver": "gross_margin_pct",
-      "from": 72.5,
-      "to": 61.0,
-      "confidence": "high",
-      "source_signal": "llm_extracted",
-      "note": "Extracted from transcript"
-    },
-    {
-      "driver": "revenue_growth_pct",
-      "from": 65.0,
-      "to": 69.0,
-      "confidence": "high",
-      "source_signal": "llm_extracted",
-      "note": "Extracted from transcript"
-    },
-    {
-      "driver": "fcf_margin_pct",
-      "from": 52.0,
-      "to": 46.0,
-      "confidence": "medium",
-      "source_signal": "llm_extracted",
-      "note": "Extracted from transcript"
-    },
-    {
-      "driver": "ev_ebitda_multiple",
-      "from": 32.0,
-      "to": 28.0,
-      "confidence": "medium",
-      "source_signal": "llm_extracted",
-      "note": "Extracted from transcript"
-    }
-  ],
-  "key_quotes": [
-    "We incurred a $4.5 billion charge associated with H20 excess inventory and purchase obligations as the demand for H20 diminished.",
-    "Global demand for NVIDIA AI infrastructure is incredibly strong.",
-    "Blackwell NVL72 AI supercomputer is now in full-scale production.",
-    "Gross margin came in at 60.5% GAAP, reflecting the H20 inventory charge; excluding charge, non-GAAP gross margin would have been 71.3%.",
-    "For Q2 we expect revenue of approximately $45.0 billion and non-GAAP gross margin of 71.8%."
-  ],
-  "signals": {
-    "ticker": "NVDA",
-    "period": "Q1_2026",
-    "revenue_actual": 44.1,
-    "revenue_guidance_next_q": 45.0,
-    "revenue_guidance_delta_pct": 4.8,
-    "gross_margin_actual_pct": 61.0,
-    "gross_margin_guidance_pct": 71.8,
-    "gross_margin_delta_bps": -1030,
-    "fcf_vs_model_pct": -5.0,
-    "inventory_days_delta": 8.0,
-    "management_tone_score": 0.55,
-    "china_revenue_pct": 10.4,
-    "capex_guidance_bn": 3.0,
-    "narrative_flags": [
-      "export restriction",
-      "china h20 license requirement",
-      "blackwell supply constraint",
-      "inventory charge",
-      "sovereign ai demand",
-      "sequential gross margin decline"
-    ],
-    "risk_flags": [
-      "export control risk",
-      "china revenue risk",
-      "supply chain constraint"
-    ],
-    "key_quotes": [
-      "We incurred a $4.5 billion charge associated with H20 excess inventory and purchase obligations as the demand for H20 diminished.",
-      "Global demand for NVIDIA AI infrastructure is incredibly strong.",
-      "Blackwell NVL72 AI supercomputer is now in full-scale production.",
-      "Gross margin came in at 60.5% GAAP, reflecting the H20 inventory charge; excluding charge, non-GAAP gross margin would have been 71.3%.",
-      "For Q2 we expect revenue of approximately $45.0 billion and non-GAAP gross margin of 71.8%."
-    ],
-    "model_assumption_updates": [
-      {
-        "driver": "gross_margin_pct",
-        "from": 72.5,
-        "to": 61.0,
-        "confidence": "high"
-      },
-      {
-        "driver": "revenue_growth_pct",
-        "from": 65.0,
-        "to": 69.0,
-        "confidence": "high"
-      },
-      {
-        "driver": "fcf_margin_pct",
-        "from": 52.0,
-        "to": 46.0,
-        "confidence": "medium"
-      },
-      {
-        "driver": "ev_ebitda_multiple",
-        "from": 32.0,
-        "to": 28.0,
-        "confidence": "medium"
-      }
-    ],
-    "thesis_signals": {
-      "bull_case_intact": true,
-      "bear_case_risk": true,
-      "new_risk_factors": [
-        "H20 China export restriction — $4.5B charge",
-        "Blackwell CoWoS supply constraint limiting upside",
-        "Potential further export rule expansion to other chips"
-      ]
-    }
-  }
+  "findings": [],
+  "model_updates": [],
+  "key_quotes": [],
+  "signals": {}
 }
