@@ -67,4 +67,3 @@ earnings-reviewer/
 
 ## License
 MIT
-"# earnings-reviewer" 
