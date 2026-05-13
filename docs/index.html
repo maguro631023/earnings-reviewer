@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="zh-TW" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Earnings Reviewer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300..700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root,[data-theme="light"]{
+  --bg:#f7f6f2;--sur:#f9f8f5;--sur2:#ffffff;--bdr:#d4d1ca;
+  --tx:#28251d;--mu:#7a7974;--pri:#01696f;--suc:#437a22;--wrn:#964219;--crit:#a13544;
+  --font:'Inter',sans-serif;--mono:'JetBrains Mono',monospace;
+}
+[data-theme="dark"]{
+  --bg:#0f0f0d;--sur:#171614;--sur2:#1e1d1b;--bdr:#2e2c2a;
+  --tx:#cdccca;--mu:#797876;--pri:#4f98a3;--suc:#6daa45;--wrn:#fdab43;--crit:#dd6974;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{-webkit-font-smoothing:antialiased;scroll-behavior:smooth}
+body{font-family:var(--font);background:var(--bg);color:var(--tx);min-height:100dvh;font-size:15px;line-height:1.6}
+header{background:var(--sur);border-bottom:1px solid var(--bdr);padding:0 1.5rem;height:56px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100}
+.logo{display:flex;align-items:center;gap:.6rem;font-weight:700;font-size:.95rem}
+.logo svg{color:var(--pri)}
+.hrow{display:flex;align-items:center;gap:.75rem}
+.tbtn{background:none;border:none;cursor:pointer;color:var(--mu);padding:.3rem;border-radius:6px;transition:color .18s}
+.tbtn:hover{color:var(--tx)}
+.badge{padding:.22rem .7rem;border-radius:999px;font-size:.7rem;font-weight:700;letter-spacing:.05em;text-transform:uppercase}
+.intact{background:color-mix(in oklab,var(--suc) 15%,transparent);color:var(--suc)}
+.watch{background:color-mix(in oklab,var(--wrn) 15%,transparent);color:var(--wrn)}
+.break{background:color-mix(in oklab,var(--crit) 15%,transparent);color:var(--crit)}
+main{max-width:1200px;margin:0 auto;padding:1.5rem}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:1rem;margin-bottom:1.5rem}
+.kpi{background:var(--sur);border:1px solid var(--bdr);border-radius:.75rem;padding:1rem 1.25rem}
+.klabel{font-size:.68rem;color:var(--mu);text-transform:uppercase;letter-spacing:.07em;margin-bottom:.3rem}
+.kval{font-size:1.7rem;font-weight:700;line-height:1;font-variant-numeric:tabular-nums}
+.red{color:var(--crit)}.amber{color:var(--wrn)}.green{color:var(--suc)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:1.25rem;margin-bottom:1.25rem}
+@media(max-width:768px){.grid2{grid-template-columns:1fr}}
+.panel{background:var(--sur);border:1px solid var(--bdr);border-radius:.75rem;overflow:hidden;margin-bottom:1.25rem}
+.phead{padding:.7rem 1.25rem;border-bottom:1px solid var(--bdr);font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--mu);display:flex;align-items:center;gap:.5rem}
+.finding{padding:.85rem 1.25rem;border-bottom:1px solid var(--bdr);display:flex;gap:.75rem}
+.finding:last-child{border-bottom:none}
+.dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;margin-top:7px}
+.d-crit{background:var(--crit)}.d-warn{background:var(--wrn)}.d-info{background:var(--pri)}
+.fname{font-size:.83rem;font-weight:600;margin-bottom:.15rem}
+.fmsg{font-size:.78rem;color:var(--mu)}
+.tag{display:inline-block;background:var(--sur2);border:1px solid var(--bdr);border-radius:4px;font-size:.62rem;padding:.07rem .38rem;margin:.2rem .15rem 0 0;color:var(--mu);font-family:var(--mono)}
+.action-pill{font-size:.62rem;padding:.1rem .48rem;border-radius:999px;font-weight:700;font-family:var(--mono);margin-left:.4rem;vertical-align:middle}
+.a-tb{background:color-mix(in oklab,var(--crit) 15%,transparent);color:var(--crit)}
+.a-ra{background:color-mix(in oklab,var(--wrn) 15%,transparent);color:var(--wrn)}
+.a-mo{background:color-mix(in oklab,var(--pri) 15%,transparent);color:var(--pri)}
+.a-ac{background:color-mix(in oklab,var(--suc) 15%,transparent);color:var(--suc)}
+.mtable{width:100%;border-collapse:collapse;font-size:.8rem}
+.mtable th{padding:.55rem 1.25rem;text-align:left;font-size:.67rem;text-transform:uppercase;letter-spacing:.07em;color:var(--mu);border-bottom:1px solid var(--bdr)}
+.mtable td{padding:.6rem 1.25rem;border-bottom:1px solid var(--bdr);font-variant-numeric:tabular-nums}
+.mtable tr:last-child td{border-bottom:none}
+.up{color:var(--suc)}.dn{color:var(--crit)}
+.quote{padding:.9rem 1.25rem;border-bottom:1px solid var(--bdr);border-left:3px solid var(--pri);font-size:.82rem;font-style:italic;color:var(--mu);line-height:1.55}
+.quote:last-child{border-bottom:none}
+.dropzone{border:2px dashed var(--bdr);border-radius:.75rem;padding:2.5rem 2rem;text-align:center;color:var(--mu);margin-bottom:1.5rem;cursor:pointer;transition:border-color .18s,background .18s}
+.dropzone:hover,.dropzone.drag{border-color:var(--pri);background:color-mix(in oklab,var(--pri) 5%,var(--sur))}
+.dropzone input{display:none}
+.btn{padding:.45rem 1rem;border-radius:.5rem;font-size:.8rem;font-weight:500;cursor:pointer;border:none;background:var(--pri);color:#fff;transition:filter .18s}
+.btn:hover{filter:brightness(1.12)}
+.ticker-in{background:var(--sur2);border:1px solid var(--bdr);border-radius:.5rem;padding:.4rem .8rem;font-size:.82rem;color:var(--tx);font-family:var(--mono);width:110px;transition:border-color .18s}
+.ticker-in:focus{outline:2px solid var(--pri);outline-offset:2px;border-color:var(--pri)}
+.empty{padding:2.5rem;text-align:center;color:var(--mu);font-size:.82rem}
+.ts{font-size:.68rem;color:var(--mu)}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+      <polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/>
+      <polyline points="16 7 22 7 22 13"/>
+    </svg>
+    Earnings Reviewer
+  </div>
+  <div class="hrow">
+    <span id="tbadge" class="badge intact">Thesis: —</span>
+    <span id="lupd" class="ts">—</span>
+    <button class="tbtn" id="themeToggle" aria-label="Toggle theme">
+      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+      </svg>
+    </button>
+  </div>
+</header>
+
+<main>
+  <label class="dropzone" id="dz">
+    <input type="file" id="fileIn" accept=".json">
+    <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
+         style="margin:0 auto .6rem;display:block;color:var(--pri)">
+      <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+      <polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/>
+    </svg>
+    <strong style="display:block;margin-bottom:.3rem;font-size:.88rem;color:var(--tx)">上傳報告 JSON</strong>
+    <span style="font-size:.75rem">拖放 <code style="font-family:var(--mono);font-size:.72rem">TICKER_PERIOD_report.json</code> 至此，或點擊選取</span>
+    <div style="margin-top:1rem;display:flex;gap:.5rem;justify-content:center;align-items:center">
+      <input class="ticker-in" id="demoTicker" placeholder="NVDA" onclick="event.stopPropagation()">
+      <button class="btn" id="demoBtn" type="button" onclick="event.stopPropagation()">載入示範資料</button>
+    </div>
+  </label>
+
+  <div class="kpis">
+    <div class="kpi"><div class="klabel">Ticker</div><div class="kval" id="k-ticker" style="font-size:1.35rem">—</div></div>
+    <div class="kpi"><div class="klabel">Period</div><div class="kval" id="k-period" style="font-size:1.35rem">—</div></div>
+    <div class="kpi"><div class="klabel">Critical Flags</div><div class="kval red" id="k-crit">—</div></div>
+    <div class="kpi"><div class="klabel">Warnings</div><div class="kval amber" id="k-warn">—</div></div>
+    <div class="kpi"><div class="klabel">Model Updates</div><div class="kval" id="k-upd">—</div></div>
+  </div>
+
+  <div class="grid2">
+    <div class="panel">
+      <div class="phead">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/>
+          <line x1="12" y1="16" x2="12.01" y2="16"/>
+        </svg>
+        投資論點訊號 / Findings
+      </div>
+      <div id="findingsList"><div class="empty">上傳報告或載入示範資料</div></div>
+    </div>
+
+    <div class="panel">
+      <div class="phead">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/>
+          <line x1="6" y1="20" x2="6" y2="14"/>
+        </svg>
+        財務模型更新
+      </div>
+      <table class="mtable">
+        <thead><tr><th>驅動因子</th><th>原始</th><th>更新後</th><th>Δ</th></tr></thead>
+        <tbody id="modelBody"><tr><td colspan="4" class="empty">尚無資料</td></tr></tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="panel">
+    <div class="phead">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M3 21c3 0 7-1 7-8V5c0-1.25-.756-2.017-2-2H4c-1.25 0-2 .75-2 1.972V11c0 1.25.75 2 2 2 1 0 1 0 1 1v1c0 1-1 2-2 2s-1 .008-1 1.031V20c0 1 0 1 1 1z"/>
+        <path d="M15 21c3 0 7-1 7-8V5c0-1.25-.757-2.017-2-2h-4c-1.25 0-2 .75-2 1.972V11c0 1.25.75 2 2 2h.75c0 2.25.25 4-2.75 4v3c0 1 0 1 1 1z"/>
+      </svg>
+      管理層關鍵引言
+    </div>
+    <div id="quotesList"><div class="empty">尚無資料</div></div>
+  </div>
+</main>
+
+<script>
+const DEMO_DATA = {
+  meta:{ticker:"NVDA",period:"Q1 2026",generated_at:"2026-05-12T00:00:00Z",thesis_status:"watch"},
+  summary:{critical_count:1,warning_count:3,model_updates_count:4,thesis_status:"watch"},
+  findings:[
+    {rule_id:"R002",name:"Gross Margin Compression",severity:"critical",action:"revise_assumption",
+     message:"GM down -250 bps — check pricing power / mix shift",tags:["margins","profitability"]},
+    {rule_id:"R004",name:"Demand Attributed to Seasonality",severity:"warning",action:"monitor",
+     message:"Seasonality narrative + inventory build — unverified thesis flag",tags:["narrative_risk","demand"]},
+    {rule_id:"R006",name:"Management Tone Deterioration",severity:"warning",action:"revise_assumption",
+     message:"Management tone score -0.28 — forward guidance may soften",tags:["qualitative","tone"]},
+    {rule_id:"S004",name:"China Revenue Risk",severity:"warning",action:"monitor",
+     message:"China exposure 22.5% — monitor export control risk",tags:["geopolitical","china"]},
+    {rule_id:"S003",name:"AI/Datacenter Growth Intact",severity:"info",action:"acknowledge",
+     message:"DC segment +32% — AI demand thesis remains intact",tags:["ai","datacenter"]},
+  ],
+  model_updates:[
+    {driver:"revenue_growth_pct",from:28,to:22,change:-6,note:"Guidance cut 6%"},
+    {driver:"gross_margin_pct",from:75,to:72.5,change:-2.5,note:"Mix shift to lower-ASP SKUs"},
+    {driver:"fcf_margin_pct",from:52,to:47,change:-5,note:"Higher R&D + capex guidance"},
+    {driver:"ev_ebitda_multiple",from:32,to:28,change:-4,note:"Multiple compression on deceleration"},
+  ],
+  key_quotes:[
+    "While demand for our Blackwell architecture remains exceptional, we are seeing near-term supply chain lumpiness that will normalize through Q2.",
+    "Gross margin came in at the lower end of guidance, reflecting higher CoGS from initial Blackwell ramp and inventory reserves.",
+    "We remain confident in the long-term AI infrastructure trajectory, though macro uncertainty warrants a more conservative near-term posture.",
+  ]
+};
+
+// Theme
+(function(){
+  const btn = document.getElementById('themeToggle');
+  const html = document.documentElement;
+  let theme = matchMedia('(prefers-color-scheme:dark)').matches ? 'dark' : 'light';
+  html.setAttribute('data-theme', theme);
+  btn.addEventListener('click', () => {
+    theme = theme === 'dark' ? 'light' : 'dark';
+    html.setAttribute('data-theme', theme);
+    btn.innerHTML = theme === 'dark'
+      ? '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>'
+      : '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>';
+  });
+})();
+
+const ACTION_CLASS = {thesis_break:'a-tb',revise_assumption:'a-ra',monitor:'a-mo',acknowledge:'a-ac'};
+const DOT_CLASS    = {critical:'d-crit',warning:'d-warn',info:'d-info'};
+
+function render(data) {
+  const m = data.meta, s = data.summary;
+
+  // header badge
+  const badge = document.getElementById('tbadge');
+  badge.textContent = 'Thesis: ' + m.thesis_status.toUpperCase();
+  badge.className = 'badge ' + m.thesis_status;
+
+  // timestamp
+  document.getElementById('lupd').textContent =
+    new Date(m.generated_at).toLocaleString('zh-TW',
+      {month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'});
+
+  // KPIs
+  document.getElementById('k-ticker').textContent = m.ticker;
+  document.getElementById('k-period').textContent = m.period;
+  document.getElementById('k-crit').textContent   = s.critical_count;
+  document.getElementById('k-warn').textContent   = s.warning_count;
+  document.getElementById('k-upd').textContent    = s.model_updates_count;
+
+  // Findings
+  const fl = document.getElementById('findingsList');
+  fl.innerHTML = (data.findings || []).length
+    ? data.findings.map(f => `
+        <div class="finding">
+          <div class="dot ${DOT_CLASS[f.severity] || 'd-info'}"></div>
+          <div style="flex:1">
+            <div class="fname">
+              [${f.rule_id}] ${f.name}
+              <span class="action-pill ${ACTION_CLASS[f.action] || 'a-mo'}">${f.action.replace(/_/g,' ')}</span>
+            </div>
+            <div class="fmsg">${f.message}</div>
+            <div>${(f.tags||[]).map(t=>`<span class="tag">${t}</span>`).join('')}</div>
+          </div>
+        </div>`).join('')
+    : '<div class="empty">無觸發規則</div>';
+
+  // Model updates
+  const mb = document.getElementById('modelBody');
+  mb.innerHTML = (data.model_updates || []).length
+    ? data.model_updates.map(u => {
+        const d = typeof u.change === 'number' ? u.change
+                  : (parseFloat(u.to)||0) - (parseFloat(u.from)||0);
+        const cls = d < 0 ? 'dn' : d > 0 ? 'up' : '';
+        const sign = d > 0 ? '+' : '';
+        return `<tr>
+          <td style="font-weight:500" title="${u.note||''}">${u.driver}</td>
+          <td style="color:var(--mu)">${u.from}</td>
+          <td style="font-weight:600">${u.to}</td>
+          <td class="${cls}" style="font-family:var(--mono);font-size:.75rem">
+            ${sign}${typeof d==='number' ? d.toFixed(2) : d}
+          </td>
+        </tr>`;
+      }).join('')
+    : '<tr><td colspan="4" class="empty">無更新</td></tr>';
+
+  // Quotes
+  const ql = document.getElementById('quotesList');
+  ql.innerHTML = (data.key_quotes || []).length
+    ? data.key_quotes.map(q => `<div class="quote">"${q}"</div>`).join('')
+    : '<div class="empty">無引言</div>';
+}
+
+// File input
+document.getElementById('fileIn').addEventListener('change', e => {
+  const file = e.target.files[0]; if (!file) return;
+  const r = new FileReader();
+  r.onload = ev => { try { render(JSON.parse(ev.target.result)); }
+                     catch(err) { alert('JSON 格式錯誤：' + err.message); } };
+  r.readAsText(file);
+});
+
+// Drag & drop
+const dz = document.getElementById('dz');
+dz.addEventListener('dragover', e => { e.preventDefault(); dz.classList.add('drag'); });
+dz.addEventListener('dragleave', () => dz.classList.remove('drag'));
+dz.addEventListener('drop', e => {
+  e.preventDefault(); dz.classList.remove('drag');
+  const file = e.dataTransfer.files[0]; if (!file) return;
+  const r = new FileReader();
+  r.onload = ev => { try { render(JSON.parse(ev.target.result)); }
+                     catch(err) { alert('JSON 格式錯誤：' + err.message); } };
+  r.readAsText(file);
+});
+
+// Auto-load latest.json
+fetch('./data/latest.json')
+  .then(r => r.ok ? r.json() : null)
+  .then(d => { if (d && d.meta && d.meta.ticker) render(d); })
+  .catch(() => {});
+
+// Demo
+document.getElementById('demoBtn').addEventListener('click', () => {
+  const t = document.getElementById('demoTicker').value.trim().toUpperCase();
+  const data = JSON.parse(JSON.stringify(DEMO_DATA));
+  if (t) data.meta.ticker = t;
+  render(data);
+});
+</script>
+</body>
+</html>
