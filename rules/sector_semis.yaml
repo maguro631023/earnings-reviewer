@@ -1,0 +1,45 @@
+version: "1.0"
+sector: semiconductors
+rules:
+  - id: S001
+    name: Book-to-Bill Below 1.0
+    condition: {field: book_to_bill, operator: less_than, threshold: 1.0}
+    severity: warning
+    action: monitor
+    message: "Book-to-bill {value} — order softness signals revenue air pocket"
+    tags: [demand, semis, orders]
+  - id: S002
+    name: Lead Time Normalization
+    condition: {field: lead_time_delta_weeks, operator: less_than, threshold: -4}
+    severity: info
+    action: acknowledge
+    message: "Lead times shortened {value}w — inventory digestion may extend"
+    tags: [supply_chain, semis]
+  - id: S003
+    name: AI / Datacenter Growth Intact
+    condition: {field: datacenter_revenue_growth_pct, operator: greater_than, threshold: 15.0}
+    severity: info
+    action: acknowledge
+    message: "DC segment +{value}% — AI demand thesis remains intact"
+    tags: [ai, datacenter, thesis_support]
+  - id: S004
+    name: China Revenue Risk
+    condition: {field: china_revenue_pct, operator: greater_than, threshold: 20.0}
+    severity: warning
+    action: monitor
+    message: "China exposure {value}% — monitor export control / geopolitical risk"
+    tags: [geopolitical, china, regulatory]
+  - id: S005
+    name: Fab Utilization Below Breakeven
+    condition: {field: fab_utilization_pct, operator: less_than, threshold: 70.0}
+    severity: critical
+    action: revise_assumption
+    message: "Fab utilization {value}% — below breakeven, gross margin at risk"
+    tags: [manufacturing, margins, semis]
+  - id: S006
+    name: Customer Concentration Risk
+    condition: {field: top1_customer_revenue_pct, operator: greater_than, threshold: 30.0}
+    severity: warning
+    action: monitor
+    message: "Top customer = {value}% of revenue — concentration risk"
+    tags: [concentration, customer, risk]
