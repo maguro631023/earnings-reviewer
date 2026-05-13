@@ -1,0 +1,76 @@
+version: "1.0"
+sector: general
+rules:
+  - id: R001
+    name: Revenue Guidance Downgrade
+    condition: {field: revenue_guidance_delta_pct, operator: less_than, threshold: -3.0}
+    severity: critical
+    action: thesis_break
+    message: "Revenue guidance cut {value}% — re-evaluate growth thesis"
+    tags: [growth, guidance]
+  - id: R002
+    name: Gross Margin Compression
+    condition: {field: gross_margin_delta_bps, operator: less_than, threshold: -200}
+    severity: critical
+    action: revise_assumption
+    message: "GM down {value} bps — check pricing power / mix shift"
+    tags: [margins, profitability]
+  - id: R003
+    name: Inventory Days Spike
+    condition: {field: dio_delta_days, operator: greater_than, threshold: 20}
+    severity: warning
+    action: monitor
+    message: "Inventory build +{value}d — watch demand softness or write-down risk"
+    tags: [balance_sheet, demand]
+  - id: R004
+    name: Demand Attributed to Seasonality with Inventory Build
+    condition:
+      combined:
+        - {field: management_demand_narrative, contains: ["seasonal","timing","pull-forward"]}
+        - {field: dio_delta_days, operator: greater_than, threshold: 10}
+    severity: warning
+    action: monitor
+    message: "Seasonality narrative + inventory build — flag as unverified thesis"
+    tags: [narrative_risk, demand]
+  - id: R005
+    name: New Material Risk Factors
+    condition: {field: new_risk_factors_count, operator: greater_than, threshold: 0}
+    severity: warning
+    action: monitor
+    message: "{value} new risk factor(s) — review for thesis impact"
+    tags: [regulatory, legal, macro]
+  - id: R006
+    name: Management Tone Deterioration
+    condition: {field: management_tone_delta, operator: less_than, threshold: -0.20}
+    severity: warning
+    action: revise_assumption
+    message: "Management tone score {value} — forward guidance may soften"
+    tags: [qualitative, tone]
+  - id: R007
+    name: FCF Miss vs Model
+    condition: {field: fcf_vs_model_pct, operator: less_than, threshold: -15.0}
+    severity: critical
+    action: revise_assumption
+    message: "FCF miss {value}% vs model — revisit capex / working capital assumptions"
+    tags: [cash_flow, model_accuracy]
+  - id: R008
+    name: Buyback Suspension
+    condition: {field: buyback_status_change, operator: equals, value: "suspended"}
+    severity: warning
+    action: revise_assumption
+    message: "Buyback suspended — check balance sheet stress / strategic pivot"
+    tags: [capital_allocation]
+  - id: R009
+    name: Revenue Guidance Upgrade
+    condition: {field: revenue_guidance_delta_pct, operator: greater_than, threshold: 3.0}
+    severity: info
+    action: acknowledge
+    message: "Revenue guidance raised +{value}% — review upside to model"
+    tags: [growth, guidance, upside]
+  - id: R010
+    name: Gross Margin Expansion
+    condition: {field: gross_margin_delta_bps, operator: greater_than, threshold: 100}
+    severity: info
+    action: acknowledge
+    message: "GM up {value} bps — margin leverage thesis strengthening"
+    tags: [margins, profitability, upside]
